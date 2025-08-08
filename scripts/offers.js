@@ -1,99 +1,100 @@
-
-import { animateCounter } from './counters.js';
-
+// scripts/offers.js — LIVE DATA VERSION (no local fallback)
 let ALL = [];
 let MAP, MARKERS = [];
 
-async function loadOffers(){
-  const res = await fetch('https://script.google.com/macros/s/AKfycbxUlA86VQ9R1Mq_8CvGUGgswUIG9_bCFTR0kTdsTHRslQMXB6D1jjixTafJNpNcOzR9ow/exec', {
-  headers: { 'Cache-Control': 'no-cache' }
-});
-
-
-  ALL = await res.json();
-  renderOffers(ALL);
-  updateTotals(ALL);
-  addMarkers(ALL);
-}
-
-function updateTotals(items){
-  const meals = items.reduce((a,b)=>a+(b.qty||1),0);
-  const kg = Math.round(meals * 0.5);
-  animateCounter(document.querySelector('#mealsSaved'), meals+5000);
-  animateCounter(document.querySelector('#kgSaved'), kg+2000);
+async function loadOffers() {
+  const url = 'https://script.google.com/macros/s/AKfycbwxSBWlzZj9QsNrLV0OTAMY92rcfWaia1QnfuwgOYiEeo-IRx6EKFX1Ui2veC-lL6Od1Q/exec';
+  const res = await fetch(url + '?v=' + Date.now(), { headers: { 'Cache-Control': 'no-cache' }});
+  if (!res.ok) throw new Error('Failed to load offers');
+  const data = await res.json();
+  console.log('Loaded offers:', data);
+  return Array.isArray(data) ? data : [];
 }
 
 function offerCard(o){
   return `
   <article class="offer">
-    <img src="${o.image}" alt="${o.item}">
+    <img src="${o.image}" alt="${o.item}" onerror="this.style.display='none'">
     <div class="body">
       <h3>${o.name}</h3>
-      <div class="row"><span>${o.item}</span><span class="tag">${o.city}</span></div>
+      <div class="row"><span>${o.item}</span><span class="tag">${o.city||''}</span></div>
       <div class="row">
-        <div><span class="price">AED ${o.price_after}</span>
-        ${o.price_before?`<span class="strike">AED ${o.price_before}</span>`:''}</div>
+        <div>
+          <span class="price">AED ${o.price_after}</span>
+          ${o.price_before ? `<span class="strike">AED ${o.price_before}</span>` : ''}
+        </div>
         <a class="btn" href="#">Get Deal</a>
       </div>
-      <div class="row"><small>Pickup: ${o.pickup_start}–${o.pickup_end}</small>
-      <small>${o.cuisine}${o.veg?' • Veg':''}${o.halal?' • Halal':''}</small></div>
+      <div class="row">
+        <small>Pickup: ${o.pickup_start}–${o.pickup_end}</small>
+        <small>${o.cuisine||''}${o.veg?' • Veg':''}${o.halal?' • Halal':''}</small>
+      </div>
     </div>
   </article>`;
 }
 
 function renderOffers(items){
   const grid = document.querySelector('#offerGrid');
+  if (!grid) return;
+  if (!items.length){
+    grid.innerHTML = '<p class="small">No live offers yet. Add rows in your Google Sheet.</p>';
+    return;
+  }
   grid.innerHTML = items.map(offerCard).join('');
 }
 
-function applyFilters(){
-  const cuisine = document.querySelector('#fCuisine').value;
-  const type = document.querySelector('#fType').value;
-  const max = parseFloat(document.querySelector('#fPrice').value || '999');
-  let list = ALL.slice();
-  if (cuisine !== 'all') list = list.filter(x=> (x.cuisine||'').toLowerCase().includes(cuisine));
-  if (type !== 'all') {
-    if (type==='veg') list = list.filter(x=>x.veg);
-    if (type==='halal') list = list.filter(x=>x.halal);
-  }
-  list = list.filter(x=> (x.price_after||0) <= max);
-  renderOffers(list);
-  refreshMarkers(list);
-}
-
 function initMap(){
+  const mapEl = document.getElementById('map');
+  if (!mapEl) return;
   MAP = L.map('map').setView([25.2048, 55.2708], 12);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap contributors'
+    maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
   }).addTo(MAP);
-
   if ('geolocation' in navigator){
     navigator.geolocation.getCurrentPosition(pos=>{
-      const {latitude, longitude} = pos.coords;
+      const { latitude, longitude } = pos.coords;
       MAP.setView([latitude, longitude], 14);
-      L.circleMarker([latitude, longitude], {radius:6}).addTo(MAP).bindPopup('You are here');
+      L.circleMarker([latitude, longitude], { radius: 6 }).addTo(MAP).bindPopup('You are here');
     });
   }
 }
 
-function addMarkers(items){
-  MARKERS.forEach(m=>MAP.removeLayer(m));
-  MARKERS = items.map(o=>{
-    const m = L.marker([o.lat, o.lng]).addTo(MAP);
+function setMarkers(items){
+  if (!MAP) return;
+  if (window.MARKERS && window.MARKERS.length) window.MARKERS.forEach(m=>MAP.removeLayer(m));
+  window.MARKERS = (items||[]).filter(o=>o.lat && o.lng).map(o=>{
+    const m = L.marker([Number(o.lat), Number(o.lng)]).addTo(MAP);
     m.bindPopup(`<strong>${o.name}</strong><br>${o.item}<br>AED ${o.price_after}`);
     return m;
   });
 }
 
-function refreshMarkers(items){
-  MARKERS.forEach(m=>MAP.removeLayer(m));
-  addMarkers(items);
+function applyFilters(){
+  if (!ALL.length) return;
+  const cuisine = (document.querySelector('#fCuisine')?.value || 'all').toLowerCase();
+  const type = (document.querySelector('#fType')?.value || 'all').toLowerCase();
+  const max = parseFloat(document.querySelector('#fPrice')?.value || '999');
+  let list = ALL.slice();
+  if (cuisine !== 'all') list = list.filter(x => (x.cuisine||'').toLowerCase().includes(cuisine));
+  if (type !== 'all'){
+    if (type === 'veg') list = list.filter(x => !!x.veg);
+    if (type === 'halal') list = list.filter(x => !!x.halal);
+  }
+  list = list.filter(x => Number(x.price_after||0) <= max);
+  renderOffers(list);
+  setMarkers(list);
 }
 
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', async ()=>{
   initMap();
-  loadOffers();
+  try {
+    ALL = await loadOffers();
+  } catch (e) {
+    console.error(e);
+    ALL = [];
+  }
+  renderOffers(ALL);
+  setMarkers(ALL);
   document.querySelectorAll('.filters select').forEach(el=>el.addEventListener('change', applyFilters));
-  document.querySelector('#fPrice').addEventListener('input', applyFilters);
+  const priceEl = document.querySelector('#fPrice'); if (priceEl) priceEl.addEventListener('input', applyFilters);
 });
