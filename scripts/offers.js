@@ -5,9 +5,10 @@ let ALL = [];
 let MAP, MARKERS = [];
 
 async function loadOffers(){
-  const res = await fetch('https://script.google.com/macros/s/AKfycbxUlA86VQ9R1Mq_8CvGUGgswUIG9_bCFTR0kTdsTHRslQMXB6D1jjixTafJNpNcOzR9ow/exec', {
+  const res = await fetch('https://script.google.com/macros/s/AKfycbwxSBWlzZj9QsNrLV0OTAMY92rcfWaia1QnfuwgOYiEeo-IRx6EKFX1Ui2veC-lL6Od1Q/exec', {
   headers: { 'Cache-Control': 'no-cache' }
 });
+
 
   ALL = await res.json();
   renderOffers(ALL);
