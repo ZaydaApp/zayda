@@ -3,13 +3,14 @@ let ALL = [];
 let MAP, MARKERS = [];
 
 async function loadOffers() {
-  const url = 'https://script.google.com/macros/s/AKfycbwxSBWlzZj9QsNrLV0OTAMY92rcfWaia1QnfuwgOYiEeo-IRx6EKFX1Ui2veC-lL6Od1Q/exec';
+  const url = 'https://script.google.com/macros/s/AKfycbxUlA86VQ9R1Mq_8CvGUGgswUIG9_bCFTR0kTdsTHRslQMXB6D1jjixTafJNpNcOzR9ow/exec';
   const res = await fetch(url + '?v=' + Date.now(), { headers: { 'Cache-Control': 'no-cache' }});
   if (!res.ok) throw new Error('Failed to load offers');
   const data = await res.json();
   console.log('Loaded offers:', data);
   return Array.isArray(data) ? data : [];
 }
+
 
 function offerCard(o){
   return `
