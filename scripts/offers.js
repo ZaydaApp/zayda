@@ -5,7 +5,7 @@ let ALL = [];
 let MAP, MARKERS = [];
 
 async function loadOffers(){
-  const res = await fetch('./data/offers.json');
+  const res = await fetch('https://script.google.com/macros/s/AKfycbwxSBWlzZj9QsNrLV0OTAMY92rcfWaia1QnfuwgOYiEeo-IRx6EKFX1Ui2veC-lL6Od1Q/exec');
   ALL = await res.json();
   renderOffers(ALL);
   updateTotals(ALL);
