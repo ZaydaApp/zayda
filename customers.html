@@ -1,0 +1,31 @@
+
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zayda – Find Your Nearest Deal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+  <header class="header"><div class="container header-inner">
+    <a class="brand" href="./index.html"><strong>Zayda</strong></a>
+    <nav class="nav"><a href="./customers.html">Customers</a><a href="./restaurants.html">Restaurants</a></nav>
+  </div></header>
+  <main class="container">
+    <section class="section">
+      <h2>Find Your Nearest Deal</h2>
+      <div class="filters">
+        <select id="fCuisine"><option value="all">All cuisines</option><option value="italian">Italian</option><option value="fast">Fast Food</option><option value="middle">Middle Eastern</option></select>
+        <select id="fType"><option value="all">Any type</option><option value="veg">Vegetarian</option><option value="halal">Halal</option></select>
+        <label>Max price AED <input id="fPrice" type="number" value="999" min="1" style="width:110px"></label>
+      </div>
+      <div class="map-wrap"><div id="map" style="height:100%"></div></div>
+      <div class="offer-grid" id="offerGrid"></div>
+    </section>
+  </main>
+  <footer class="footer">© 2025 Zayda</footer>
+  <script type="module" src="./scripts/offers.js"></script>
+</body></html>

@@ -1,0 +1,53 @@
+[
+  {
+    "id": "dxb-001",
+    "name": "Sandwich Express",
+    "lat": 25.204,
+    "lng": 55.271,
+    "item": "Surprise Bag",
+    "price_before": 28,
+    "price_after": 14,
+    "qty": 10,
+    "pickup_start": "18:00",
+    "pickup_end": "21:00",
+    "cuisine": "Fast Food",
+    "halal": true,
+    "veg": false,
+    "city": "Dubai Marina",
+    "image": "https://images.unsplash.com/photo-1606756790138-261c136b1b15?q=80&w=800&auto=format&fit=crop"
+  },
+  {
+    "id": "dxb-002",
+    "name": "Al Shami",
+    "lat": 25.225,
+    "lng": 55.285,
+    "item": "Falafel Sandwich",
+    "price_before": 20,
+    "price_after": 9,
+    "qty": 20,
+    "pickup_start": "20:00",
+    "pickup_end": "22:00",
+    "cuisine": "Middle Eastern",
+    "halal": true,
+    "veg": true,
+    "city": "Al Rigga",
+    "image": "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?q=80&w=800&auto=format&fit=crop"
+  },
+  {
+    "id": "dxb-003",
+    "name": "Mama Italia",
+    "lat": 25.068,
+    "lng": 55.142,
+    "item": "Pasta Bowl",
+    "price_before": 45,
+    "price_after": 12,
+    "qty": 7,
+    "pickup_start": "19:30",
+    "pickup_end": "21:30",
+    "cuisine": "Italian",
+    "halal": true,
+    "veg": false,
+    "city": "JLT",
+    "image": "https://images.unsplash.com/photo-1525755662778-989d0524087e?q=80&w=800&auto=format&fit=crop"
+  }
+]
